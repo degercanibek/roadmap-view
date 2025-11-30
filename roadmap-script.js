@@ -20,6 +20,59 @@
 let currentLanguage = 'tr';
 let editMode = false;
 let defaultRoadmapData = null;
+let currentTheme = 'thy-red'; // Default theme
+let currentFontSize = 'medium'; // Default font size
+
+// Available themes with their color schemes (popular design palettes)
+const themes = {
+    'thy-red': { name: 'THY Red', colors: ['#e30a17', '#f04e5a', '#f79298'] },
+    'sunset-warm': { name: 'Sunset Warm', colors: ['#f97316', '#fb923c', '#fbbf24'] },
+    'ocean-breeze': { name: 'Ocean Breeze', colors: ['#0891b2', '#06b6d4', '#67e8f9'] },
+    'forest-sage': { name: 'Forest Sage', colors: ['#059669', '#10b981', '#34d399'] },
+    'purple-pink': { name: 'Purple Pink', colors: ['#9333ea', '#d946ef', '#f0abfc'] },
+    'coral-peach': { name: 'Coral Peach', colors: ['#f43f5e', '#fb7185', '#fda4af'] },
+    'mint-teal': { name: 'Mint Teal', colors: ['#14b8a6', '#2dd4bf', '#5eead4'] },
+    'lavender-blue': { name: 'Lavender Blue', colors: ['#6366f1', '#818cf8', '#a5b4fc'] },
+    'tangerine': { name: 'Tangerine', colors: ['#ea580c', '#fb923c', '#fdba74'] },
+    'berry-magenta': { name: 'Berry Magenta', colors: ['#be123c', '#e11d48', '#fb7185'] },
+    'emerald-jade': { name: 'Emerald Jade', colors: ['#047857', '#059669', '#10b981'] },
+    'sky-azure': { name: 'Sky Azure', colors: ['#0284c7', '#0ea5e9', '#38bdf8'] },
+    'grape-violet': { name: 'Grape Violet', colors: ['#7c3aed', '#8b5cf6', '#a78bfa'] },
+    'citrus-lime': { name: 'Citrus Lime', colors: ['#65a30d', '#84cc16', '#a3e635'] },
+    'fuchsia-rose': { name: 'Fuchsia Rose', colors: ['#c026d3', '#d946ef', '#e879f9'] },
+    'aqua-turquoise': { name: 'Aqua Turquoise', colors: ['#0891b2', '#06b6d4', '#22d3ee'] },
+    'slate-blue': { name: 'Slate Blue', colors: ['#475569', '#64748b', '#94a3b8'] },
+    'warm-earth': { name: 'Warm Earth', colors: ['#92400e', '#b45309', '#d97706'] },
+    'cherry-red': { name: 'Cherry Red', colors: ['#991b1b', '#dc2626', '#ef4444'] },
+    'midnight-blue': { name: 'Midnight Blue', colors: ['#1e3a8a', '#1e40af', '#3b82f6'] },
+    'peachy-coral': { name: 'Peachy Coral', colors: ['#fb923c', '#fdba74', '#fcd34d'] },
+    'tropical': { name: 'Tropical', colors: ['#f59e0b', '#10b981', '#06b6d4'] },
+    'sunset-gradient': { name: 'Sunset Gradient', colors: ['#dc2626', '#f59e0b', '#fbbf24'] },
+    'ocean-depth': { name: 'Ocean Depth', colors: ['#1e40af', '#0891b2', '#06b6d4'] },
+    'spring-meadow': { name: 'Spring Meadow', colors: ['#84cc16', '#22c55e', '#10b981'] },
+    
+    // Rich Pastel color palettes (darker but still soft - better visibility on white)
+    'soft-coral': { name: 'Soft Coral', colors: ['#f87171', '#fb923c', '#fbbf24'] },
+    'dusty-rose': { name: 'Dusty Rose', colors: ['#f472b6', '#ec4899', '#db2777'] },
+    'muted-lavender': { name: 'Muted Lavender', colors: ['#a78bfa', '#c084fc', '#d8b4fe'] },
+    'sage-green': { name: 'Sage Green', colors: ['#4ade80', '#34d399', '#22d3ee'] },
+    'soft-teal': { name: 'Soft Teal', colors: ['#2dd4bf', '#5eead4', '#94a3b8'] },
+    'warm-peach': { name: 'Warm Peach', colors: ['#fdba74', '#fbbf24', '#fcd34d'] },
+    'powder-blue': { name: 'Powder Blue', colors: ['#60a5fa', '#7dd3fc', '#93c5fd'] },
+    'mauve-purple': { name: 'Mauve Purple', colors: ['#c084fc', '#d946ef', '#e879f9'] },
+    'seafoam': { name: 'Seafoam', colors: ['#34d399', '#5eead4', '#67e8f9'] },
+    'terracotta': { name: 'Terracotta', colors: ['#fb923c', '#f59e0b', '#eab308'] }
+};
+
+// Font size options (array for easier increment/decrement)
+const fontSizeKeys = ['xsmall', 'small', 'medium', 'large', 'xlarge'];
+const fontSizes = {
+    'xsmall': { name: 'Extra Small', base: '11px', date: '9px' },
+    'small': { name: 'Small', base: '13px', date: '10px' },
+    'medium': { name: 'Medium', base: '14px', date: '11px' },
+    'large': { name: 'Large', base: '16px', date: '12px' },
+    'xlarge': { name: 'Extra Large', base: '18px', date: '13px' }
+};
 
 // Check if first time visit
 function isFirstVisit() {
@@ -55,6 +108,70 @@ async function loadData() {
 // Save data to localStorage
 function saveData(data) {
     localStorage.setItem('roadmapData', JSON.stringify(data));
+}
+
+// Load settings from localStorage
+function loadSettings() {
+    const savedTheme = localStorage.getItem('roadmapTheme');
+    if (savedTheme && themes[savedTheme]) {
+        currentTheme = savedTheme;
+    }
+    
+    const savedFontSize = localStorage.getItem('roadmapFontSize');
+    if (savedFontSize && fontSizes[savedFontSize]) {
+        currentFontSize = savedFontSize;
+    }
+}
+
+// Save settings to localStorage
+function saveSettings() {
+    localStorage.setItem('roadmapTheme', currentTheme);
+    localStorage.setItem('roadmapFontSize', currentFontSize);
+}
+
+// Apply theme colors
+function applyTheme() {
+    const theme = themes[currentTheme];
+    document.documentElement.style.setProperty('--color-short-term', theme.colors[0]);
+    document.documentElement.style.setProperty('--color-mid-term', theme.colors[1]);
+    document.documentElement.style.setProperty('--color-long-term', theme.colors[2]);
+}
+
+// Apply font size
+function applyFontSize() {
+    const size = fontSizes[currentFontSize];
+    document.documentElement.style.setProperty('--font-size-base', size.base);
+    document.documentElement.style.setProperty('--font-size-date', size.date);
+}
+
+// Change theme
+function changeTheme(themeKey) {
+    currentTheme = themeKey;
+    saveSettings();
+    applyTheme();
+}
+
+// Change font size
+function changeFontSize(sizeKey) {
+    currentFontSize = sizeKey;
+    saveSettings();
+    applyFontSize();
+}
+
+// Increase font size
+function increaseFontSize() {
+    const currentIndex = fontSizeKeys.indexOf(currentFontSize);
+    if (currentIndex < fontSizeKeys.length - 1) {
+        changeFontSize(fontSizeKeys[currentIndex + 1]);
+    }
+}
+
+// Decrease font size
+function decreaseFontSize() {
+    const currentIndex = fontSizeKeys.indexOf(currentFontSize);
+    if (currentIndex > 0) {
+        changeFontSize(fontSizeKeys[currentIndex - 1]);
+    }
 }
 
 // Get text in current language
@@ -94,7 +211,39 @@ async function loadRoadmap() {
             // Create section header
             const header = document.createElement('div');
             header.className = 'section-header';
-            header.textContent = getText(section.title);
+            
+            // Add width controls in edit mode
+            if (editMode) {
+                const headerContent = document.createElement('div');
+                headerContent.style.display = 'flex';
+                headerContent.style.alignItems = 'center';
+                headerContent.style.justifyContent = 'center';
+                headerContent.style.gap = '8px';
+                
+                const decreaseBtn = document.createElement('button');
+                decreaseBtn.className = 'width-btn';
+                decreaseBtn.textContent = 'W−';
+                decreaseBtn.title = 'Decrease width';
+                decreaseBtn.onclick = () => decreaseSectionWidth(section.id);
+                
+                const titleSpan = document.createElement('span');
+                titleSpan.textContent = getText(section.title);
+                titleSpan.style.flex = '1';
+                
+                const increaseBtn = document.createElement('button');
+                increaseBtn.className = 'width-btn';
+                increaseBtn.textContent = 'W+';
+                increaseBtn.title = 'Increase width';
+                increaseBtn.onclick = () => increaseSectionWidth(section.id);
+                
+                headerContent.appendChild(decreaseBtn);
+                headerContent.appendChild(titleSpan);
+                headerContent.appendChild(increaseBtn);
+                header.appendChild(headerContent);
+            } else {
+                header.textContent = getText(section.title);
+            }
+            
             sectionDiv.appendChild(header);
             
             // Create milestones list
@@ -167,12 +316,44 @@ async function loadRoadmap() {
 async function changeLanguage(lang) {
     currentLanguage = lang;
     await loadRoadmap();
-    
-    // Update active button
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add('active');
+}
+
+// Width sizes array for increment/decrement
+const widthKeys = ['xsmall', 'small', 'medium', 'large', 'xlarge'];
+
+// Change section width
+async function changeSectionWidth(sectionId, width) {
+    const data = await loadData();
+    const section = data.sections.find(s => s.id === sectionId);
+    section.width = width;
+    saveData(data);
+    await loadRoadmap();
+}
+
+// Increase section width
+async function increaseSectionWidth(sectionId) {
+    const data = await loadData();
+    const section = data.sections.find(s => s.id === sectionId);
+    const currentWidth = section.width || 'medium';
+    const currentIndex = widthKeys.indexOf(currentWidth);
+    if (currentIndex < widthKeys.length - 1) {
+        section.width = widthKeys[currentIndex + 1];
+        saveData(data);
+        await loadRoadmap();
+    }
+}
+
+// Decrease section width
+async function decreaseSectionWidth(sectionId) {
+    const data = await loadData();
+    const section = data.sections.find(s => s.id === sectionId);
+    const currentWidth = section.width || 'medium';
+    const currentIndex = widthKeys.indexOf(currentWidth);
+    if (currentIndex > 0) {
+        section.width = widthKeys[currentIndex - 1];
+        saveData(data);
+        await loadRoadmap();
+    }
 }
 
 // Toggle edit mode
@@ -330,6 +511,38 @@ async function showFirstTimeImport() {
 
 // Load roadmap when page loads
 document.addEventListener('DOMContentLoaded', async () => {
+    // Load settings first
+    loadSettings();
+    applyTheme();
+    applyFontSize();
+    
+    // Populate theme selector with color indicators
+    const themeSelect = document.getElementById('theme-select');
+    Object.keys(themes).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = '⬤ ' + themes[key].name;
+        option.setAttribute('data-color', themes[key].colors[0]);
+        option.style.color = themes[key].colors[0];
+        option.style.fontWeight = '600';
+        if (key === currentTheme) option.selected = true;
+        themeSelect.appendChild(option);
+    });
+    
+    // Update theme select appearance based on selection
+    function updateThemeSelectColor() {
+        const selectedOption = themeSelect.options[themeSelect.selectedIndex];
+        const color = selectedOption.getAttribute('data-color');
+        themeSelect.style.color = color;
+        themeSelect.style.fontWeight = '600';
+    }
+    updateThemeSelectColor();
+    themeSelect.addEventListener('change', updateThemeSelectColor);
+    
+    // Set language selector
+    const langSelect = document.getElementById('lang-select');
+    langSelect.value = currentLanguage;
+    
     // Check if first visit
     if (isFirstVisit()) {
         await showFirstTimeImport();
@@ -337,12 +550,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         await loadRoadmap();
     }
     
-    // Add language switcher event listeners
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            changeLanguage(btn.dataset.lang);
-        });
+    // Language selector
+    langSelect.addEventListener('change', (e) => {
+        changeLanguage(e.target.value);
     });
+    
+    // Theme selector
+    themeSelect.addEventListener('change', (e) => {
+        changeTheme(e.target.value);
+    });
+    
+    // Font size buttons
+    document.getElementById('font-increase').addEventListener('click', increaseFontSize);
+    document.getElementById('font-decrease').addEventListener('click', decreaseFontSize);
     
     // Edit mode button
     document.getElementById('edit-mode-btn').addEventListener('click', toggleEditMode);

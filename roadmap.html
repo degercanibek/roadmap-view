@@ -9,14 +9,28 @@
 <body>
 
     <div class="top-controls">
-        <div class="language-switcher">
-            <button class="lang-btn active" data-lang="tr" title="Türkçe">🇹🇷</button>
-            <button class="lang-btn" data-lang="en" title="English">🇬🇧</button>
-        </div>
-        <div class="edit-controls-top">
-            <button id="import-btn" class="import-btn" title="Import JSON">📥 Import</button>
-            <button id="export-btn" class="export-btn" title="Export JSON">📤 Export</button>
-            <button id="edit-mode-btn" class="edit-mode-btn">✏️ Edit</button>
+        <div class="controls-container">
+            <select id="lang-select" class="control-select lang-select" title="Language">
+                <option value="tr">🇹🇷 TR</option>
+                <option value="en">🇬🇧 EN</option>
+            </select>
+            
+            <div class="control-divider"></div>
+            
+            <select id="theme-select" class="control-select theme-select" title="Theme"></select>
+            
+            <div class="control-divider"></div>
+            
+            <div class="font-size-controls">
+                <button id="font-decrease" class="font-btn" title="Decrease font size">A−</button>
+                <button id="font-increase" class="font-btn" title="Increase font size">A+</button>
+            </div>
+            
+            <div class="control-divider"></div>
+            
+            <button id="import-btn" class="control-btn" title="Import JSON">Import</button>
+            <button id="export-btn" class="control-btn" title="Export JSON">Export</button>
+            <button id="edit-mode-btn" class="control-btn edit-btn" title="Edit Mode">Edit</button>
         </div>
     </div>
 

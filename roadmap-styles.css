@@ -4,111 +4,159 @@
     box-sizing: border-box;
 }
 
+:root {
+    /* Default theme colors (THY Red) */
+    --color-short-term: #e30a17;
+    --color-mid-term: #f04e5a;
+    --color-long-term: #f79298;
+    
+    /* Default font sizes */
+    --font-size-base: 14px;
+    --font-size-date: 11px;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background-color: #f4f7f6;
     color: #333;
     padding: 20px;
+    font-size: var(--font-size-base);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .top-controls {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    max-width: 1200px;
-    margin: 0 auto 15px;
+    margin: 0 auto 25px;
+    padding-bottom: 10px;
 }
 
-.language-switcher {
+.controls-container {
     display: flex;
-    gap: 8px;
-}
-
-.edit-controls-top {
-    display: flex;
-    gap: 8px;
-}
-
-.lang-btn {
+    align-items: center;
+    gap: 0;
     background: white;
-    border: 2px solid #ddd;
-    border-radius: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+}
+
+.control-select {
+    border: none;
+    background: transparent;
+    padding: 6px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #374151;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.control-select:hover {
+    color: #111827;
+    background: #f9fafb;
+    border-radius: 4px;
+}
+
+.control-select:focus {
+    outline: none;
+    background: #f3f4f6;
+    border-radius: 4px;
+}
+
+.lang-select {
+    font-size: 12px;
+}
+
+.theme-select {
+    min-width: 140px;
+}
+
+.theme-select option {
+    padding: 6px 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.control-divider {
+    width: 1px;
+    height: 20px;
+    background: #e5e7eb;
+    margin: 0 8px;
+}
+
+.font-size-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.font-btn {
+    border: none;
+    background: transparent;
+    padding: 4px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    color: #6b7280;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    min-width: 32px;
+}
+
+.font-btn:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.font-btn:active {
+    background: #e5e7eb;
+}
+
+.control-btn {
+    border: none;
+    background: transparent;
     padding: 6px 12px;
-    font-size: 1.5em;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: #6b7280;
+    border-radius: 4px;
+    transition: all 0.2s ease;
 }
 
-.lang-btn:hover {
-    border-color: #3b82f6;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+.control-btn:hover {
+    background: #f3f4f6;
+    color: #111827;
 }
 
-.lang-btn.active {
-    border-color: #2563eb;
-    background: linear-gradient(135deg, #eff6ff, #dbeafe);
-    box-shadow: 0 3px 6px rgba(37, 99, 235, 0.2);
+.control-btn:active {
+    background: #e5e7eb;
 }
 
-.edit-mode-btn {
-    background: #10b981;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 16px;
-    font-size: 0.9em;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.control-btn.edit-btn.active {
+    background: #fef2f2;
+    color: #dc2626;
 }
 
-.edit-mode-btn:hover {
-    background: #059669;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+.control-btn.edit-btn.active:hover {
+    background: #fee2e2;
 }
 
-.edit-mode-btn.active {
-    background: #ef4444;
-}
-
-.edit-mode-btn.active:hover {
-    background: #dc2626;
-}
-
-.import-btn, .export-btn {
-    background: #6366f1;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 8px 16px;
-    font-size: 0.9em;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.import-btn:hover, .export-btn:hover {
-    background: #4f46e5;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.export-btn {
-    background: #8b5cf6;
-}
-
-.export-btn:hover {
-    background: #7c3aed;
-}
-
-h1 {
+.page-title {
     text-align: center;
-    color: #2a3f54;
-    margin-bottom: 20px;
-    font-size: 1.5em;
+    color: #374151;
+    margin: 20px auto 0 auto;
+    padding: 0 0 50px 0;
+    font-size: 1.4em;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    width: 100%;
+    max-width: 1400px;
 }
 
 .roadmap-container {
@@ -116,8 +164,10 @@ h1 {
     justify-content: center;
     align-items: flex-start;
     gap: 15px;
-    margin: 0 auto;
+    margin: 40px auto 0 auto;
     position: relative;
+    width: 100%;
+    max-width: 1400px;
 }
 
 .roadmap-section {
@@ -154,18 +204,40 @@ h1 {
     border-radius: 6px 6px 0 0;
     color: white;
     margin-bottom: 0;
+    position: relative;
+}
+
+.width-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 2px 6px;
+    font-size: 0.75em;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.width-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.width-btn:active {
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .short-term .section-header {
-    background: linear-gradient(135deg, #2563eb, #1e40af);
+    background: var(--color-short-term);
 }
 
 .mid-term .section-header {
-    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    background: var(--color-mid-term);
 }
 
 .long-term .section-header {
-    background: linear-gradient(135deg, #93c5fd, #60a5fa);
+    background: var(--color-long-term);
 }
 
 .milestones-list {
@@ -208,30 +280,30 @@ h1 {
 }
 
 .short-term .milestone-item.highlighted {
-    border-left: 4px solid #2563eb;
-    background: #eff6ff;
+    border-left: 4px solid var(--color-short-term);
+    background: rgba(227, 10, 23, 0.05);
 }
 
 .short-term .milestone-item.highlighted::before {
-    color: #2563eb;
+    color: var(--color-short-term);
 }
 
 .mid-term .milestone-item.highlighted {
-    border-left: 4px solid #60a5fa;
-    background: #f0f9ff;
+    border-left: 4px solid var(--color-mid-term);
+    background: rgba(240, 78, 90, 0.05);
 }
 
 .mid-term .milestone-item.highlighted::before {
-    color: #60a5fa;
+    color: var(--color-mid-term);
 }
 
 .long-term .milestone-item.highlighted {
-    border-left: 4px solid #93c5fd;
-    background: #f5faff;
+    border-left: 4px solid var(--color-long-term);
+    background: rgba(247, 146, 152, 0.05);
 }
 
 .long-term .milestone-item.highlighted::before {
-    color: #93c5fd;
+    color: var(--color-long-term);
 }
 
 .milestone-item.highlighted .milestone-description {
@@ -241,20 +313,20 @@ h1 {
 
 .milestone-date {
     font-weight: bold;
-    font-size: 0.85em;
+    font-size: var(--font-size-date);
     margin-bottom: 4px;
 }
 
 .short-term .milestone-date {
-    color: #1e40af;
+    color: var(--color-short-term);
 }
 
 .mid-term .milestone-date {
-    color: #3b82f6;
+    color: var(--color-mid-term);
 }
 
 .long-term .milestone-date {
-    color: #60a5fa;
+    color: var(--color-long-term);
 }
 
 .milestone-description {
@@ -269,15 +341,15 @@ h1 {
 }
 
 .short-term .milestone-description .highlight {
-    color: #1e40af;
+    color: var(--color-short-term);
 }
 
 .mid-term .milestone-description .highlight {
-    color: #3b82f6;
+    color: var(--color-mid-term);
 }
 
 .long-term .milestone-description .highlight {
-    color: #60a5fa;
+    color: var(--color-long-term);
 }
 
 /* Edit mode styles */
