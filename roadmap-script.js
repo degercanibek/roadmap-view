@@ -297,9 +297,15 @@ async function loadRoadmap() {
             // Add "Add New" button in edit mode
             if (editMode) {
                 const addBtn = document.createElement('button');
-                addBtn.className = 'btn-add';
+                addBtn.className = `btn-add ${section.id}`;
                 addBtn.textContent = '+ Add Milestone';
                 addBtn.onclick = () => openAddModal(section.id);
+                
+                // Apply theme color to button
+                const theme = themes[currentTheme];
+                const colorIndex = section.id === 'short-term' ? 0 : section.id === 'mid-term' ? 1 : 2;
+                addBtn.style.background = theme.colors[colorIndex];
+                
                 milestonesList.appendChild(addBtn);
             }
             
