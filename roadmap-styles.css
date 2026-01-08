@@ -538,3 +538,29 @@ body.edit-mode .edit-controls {
 .btn-cancel:hover {
     background: #4b5563;
 }
+
+/* ============================================
+   DRAG & DROP STYLES
+   ============================================ */
+
+.milestone-item[draggable="true"] {
+    cursor: move;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.milestone-item.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.milestones-list.drag-over {
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px dashed rgba(16, 185, 129, 0.5);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.milestone-item[draggable="true"]:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}

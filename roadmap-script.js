@@ -24,6 +24,11 @@ let currentTheme = 'thy-red'; // Default theme
 let currentFontSize = 'medium'; // Default font size
 let currentFontFamily = 'system'; // Default font family
 
+// Drag & drop state
+let draggedElement = null;
+let draggedSectionId = null;
+let draggedMilestoneIndex = null;
+
 // Available themes with their color schemes (popular design palettes)
 const themes = {
     'thy-red': { name: 'THY Red', colors: ['#e30a17', '#f04e5a', '#f79298'] },
@@ -324,11 +329,31 @@ async function loadRoadmap() {
             // Create milestones list
             const milestonesList = document.createElement('div');
             milestonesList.className = 'milestones-list';
+            milestonesList.dataset.sectionId = section.id;
+            
+            // Make drop zone in edit mode
+            if (editMode) {
+                milestonesList.addEventListener('dragover', handleDragOver);
+                milestonesList.addEventListener('drop', handleDrop);
+                milestonesList.addEventListener('dragenter', handleDragEnter);
+                milestonesList.addEventListener('dragleave', handleDragLeave);
+            }
             
             // Add each milestone
-            section.milestones.forEach(milestone => {
+            section.milestones.forEach((milestone, milestoneIndex) => {
                 const milestoneItem = document.createElement('div');
                 milestoneItem.className = 'milestone-item';
+                
+                // Make draggable in edit mode
+                if (editMode) {
+                    milestoneItem.draggable = true;
+                    milestoneItem.dataset.sectionId = section.id;
+                    milestoneItem.dataset.milestoneIndex = milestoneIndex;
+                    
+                    // Drag event handlers
+                    milestoneItem.addEventListener('dragstart', handleDragStart);
+                    milestoneItem.addEventListener('dragend', handleDragEnd);
+                }
                 
                 // Add RAG status class
                 const ragStatus = milestone.ragStatus || 'none';
@@ -417,6 +442,120 @@ async function changeLanguage(lang) {
 
 // Width sizes array for increment/decrement
 const widthKeys = ['xsmall', 'small', 'medium', 'large', 'xlarge'];
+
+// ============================================
+// DRAG & DROP HANDLERS
+// ============================================
+
+function handleDragStart(e) {
+    draggedElement = e.target;
+    draggedSectionId = e.target.dataset.sectionId;
+    draggedMilestoneIndex = parseInt(e.target.dataset.milestoneIndex);
+    
+    e.target.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', e.target.innerHTML);
+}
+
+function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+    
+    // Remove all drag-over classes
+    document.querySelectorAll('.milestones-list').forEach(list => {
+        list.classList.remove('drag-over');
+    });
+}
+
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+function handleDragEnter(e) {
+    if (e.target.classList.contains('milestones-list')) {
+        e.target.classList.add('drag-over');
+    }
+}
+
+function handleDragLeave(e) {
+    if (e.target.classList.contains('milestones-list')) {
+        // Check if we're actually leaving the element (not just entering a child)
+        const rect = e.target.getBoundingClientRect();
+        if (e.clientX < rect.left || e.clientX >= rect.right ||
+            e.clientY < rect.top || e.clientY >= rect.bottom) {
+            e.target.classList.remove('drag-over');
+        }
+    }
+}
+
+async function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    
+    const targetList = e.target.closest('.milestones-list');
+    if (!targetList) return;
+    
+    const targetSectionId = targetList.dataset.sectionId;
+    
+    // Get the milestone we're dropping on (if any)
+    let targetMilestoneItem = e.target.closest('.milestone-item');
+    let insertBeforeIndex = null;
+    
+    // Load current data
+    const data = await loadData();
+    const sourceSection = data.sections.find(s => s.id === draggedSectionId);
+    const targetSection = data.sections.find(s => s.id === targetSectionId);
+    
+    if (!sourceSection || !targetSection) return;
+    
+    // Get the milestone being dragged
+    const milestone = sourceSection.milestones[draggedMilestoneIndex];
+    
+    // Calculate drop position
+    if (targetMilestoneItem && targetMilestoneItem !== draggedElement) {
+        const targetIndex = parseInt(targetMilestoneItem.dataset.milestoneIndex);
+        const rect = targetMilestoneItem.getBoundingClientRect();
+        const midpoint = rect.top + rect.height / 2;
+        
+        // Determine if we should insert before or after
+        if (e.clientY < midpoint) {
+            insertBeforeIndex = targetIndex;
+        } else {
+            insertBeforeIndex = targetIndex + 1;
+        }
+    } else {
+        // Drop at the end of the list
+        insertBeforeIndex = targetSection.milestones.length;
+    }
+    
+    // If dropping in the same section, adjust index
+    if (draggedSectionId === targetSectionId && draggedMilestoneIndex < insertBeforeIndex) {
+        insertBeforeIndex--;
+    }
+    
+    // Remove from source
+    sourceSection.milestones.splice(draggedMilestoneIndex, 1);
+    
+    // Insert at target position
+    if (insertBeforeIndex === null || insertBeforeIndex >= targetSection.milestones.length) {
+        targetSection.milestones.push(milestone);
+    } else {
+        targetSection.milestones.splice(insertBeforeIndex, 0, milestone);
+    }
+    
+    // Save and reload
+    saveData(data);
+    await loadRoadmap();
+    
+    return false;
+}
 
 // Change section width
 async function changeSectionWidth(sectionId, width) {
