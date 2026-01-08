@@ -82,6 +82,10 @@ body {
     font-weight: 600;
 }
 
+#font-family-select {
+    min-width: 130px;
+}
+
 .control-divider {
     width: 1px;
     height: 20px;

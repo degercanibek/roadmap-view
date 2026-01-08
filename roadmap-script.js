@@ -22,6 +22,7 @@ let editMode = false;
 let defaultRoadmapData = null;
 let currentTheme = 'thy-red'; // Default theme
 let currentFontSize = 'medium'; // Default font size
+let currentFontFamily = 'system'; // Default font family
 
 // Available themes with their color schemes (popular design palettes)
 const themes = {
@@ -72,6 +73,16 @@ const fontSizes = {
     'medium': { name: 'Medium', base: '14px', date: '11px' },
     'large': { name: 'Large', base: '16px', date: '12px' },
     'xlarge': { name: 'Extra Large', base: '18px', date: '13px' }
+};
+
+// Font family options
+const fontFamilies = {
+    'system': { name: 'System Default', family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' },
+    'helvetica': { name: 'Helvetica', family: 'Helvetica, Arial, sans-serif' },
+    'arial': { name: 'Arial', family: 'Arial, sans-serif' },
+    'times': { name: 'Times New Roman', family: '"Times New Roman", Times, serif' },
+    'verdana': { name: 'Verdana', family: 'Verdana, Geneva, sans-serif' },
+    'georgia': { name: 'Georgia', family: 'Georgia, serif' }
 };
 
 // Check if first time visit
@@ -166,12 +177,18 @@ function loadSettings() {
     if (savedFontSize && fontSizes[savedFontSize]) {
         currentFontSize = savedFontSize;
     }
+    
+    const savedFontFamily = localStorage.getItem('roadmapFontFamily');
+    if (savedFontFamily && fontFamilies[savedFontFamily]) {
+        currentFontFamily = savedFontFamily;
+    }
 }
 
 // Save settings to localStorage
 function saveSettings() {
     localStorage.setItem('roadmapTheme', currentTheme);
     localStorage.setItem('roadmapFontSize', currentFontSize);
+    localStorage.setItem('roadmapFontFamily', currentFontFamily);
 }
 
 // Apply theme colors
@@ -189,6 +206,12 @@ function applyFontSize() {
     document.documentElement.style.setProperty('--font-size-date', size.date);
 }
 
+// Apply font family
+function applyFontFamily() {
+    const fontFamily = fontFamilies[currentFontFamily];
+    document.body.style.fontFamily = fontFamily.family;
+}
+
 // Change theme
 function changeTheme(themeKey) {
     currentTheme = themeKey;
@@ -201,6 +224,13 @@ function changeFontSize(sizeKey) {
     currentFontSize = sizeKey;
     saveSettings();
     applyFontSize();
+}
+
+// Change font family
+function changeFontFamily(familyKey) {
+    currentFontFamily = familyKey;
+    saveSettings();
+    applyFontFamily();
 }
 
 // Increase font size
@@ -591,6 +621,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     loadSettings();
     applyTheme();
     applyFontSize();
+    applyFontFamily();
     
     // Populate theme selector with color indicators
     const themeSelect = document.getElementById('theme-select');
@@ -639,6 +670,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Font size buttons
     document.getElementById('font-increase').addEventListener('click', increaseFontSize);
     document.getElementById('font-decrease').addEventListener('click', decreaseFontSize);
+    
+    // Font family selector
+    const fontFamilySelect = document.getElementById('font-family-select');
+    Object.keys(fontFamilies).forEach(key => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = fontFamilies[key].name;
+        if (key === currentFontFamily) option.selected = true;
+        fontFamilySelect.appendChild(option);
+    });
+    
+    fontFamilySelect.addEventListener('change', (e) => {
+        changeFontFamily(e.target.value);
+    });
     
     // Edit mode button
     document.getElementById('edit-mode-btn').addEventListener('click', toggleEditMode);
